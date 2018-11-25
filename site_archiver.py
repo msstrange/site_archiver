@@ -1,13 +1,12 @@
 import requests as r
 from bs4 import BeautifulSoup as bs
-from datetime import datetime as dt
 from time import sleep
 from os import path, makedirs
 from gooey import Gooey, GooeyParser
-import argparse
 from pathlib import Path
 
-def SiteArchiver(site, domains_to_scrape, file_path, wait_time):
+
+def site_archiver(site, domains_to_scrape, file_path, wait_time):
 
     file_path = str(Path(file_path))
 
@@ -19,9 +18,9 @@ def SiteArchiver(site, domains_to_scrape, file_path, wait_time):
     if not path.exists(file_path):
         makedirs(file_path)
 
-    def filter(link):
+    def link_filter(link):
 
-        if link == None:
+        if link is None:
             return False
 
         if link == '/':
@@ -34,7 +33,7 @@ def SiteArchiver(site, domains_to_scrape, file_path, wait_time):
             link = link.split('#', 1)[0]
 
         if not isinstance(link, str):
-            return false
+            return False
 
         if link.startswith('/'):
             link = site + link
@@ -66,9 +65,10 @@ def SiteArchiver(site, domains_to_scrape, file_path, wait_time):
 
         link_text = [link.get('href') for link in bs(page_text, 'html.parser').find_all('a')]
 
-        [scrape(link) for link in link_text if filter(link)]
+        [scrape(link) for link in link_text if link_filter(link)]
 
     scrape(site)
+
 
 @Gooey(program_name='Site Archiver Tool')
 def main():
@@ -85,14 +85,15 @@ def main():
 
     args = parser.parse_args()
 
-    SiteArchiver(
+    site_archiver(
         site=args.site, domains_to_scrape=args.domains, file_path=args.file_path,
         wait_time=args.wait_time
     )
 
+
 if __name__ == '__main__':
-    # main()
-    SiteArchiver(
-        "http://www.scp-wiki.net", "scp-wiki.net", file_path="D:\scp_archives",
-        wait_time=60
-    )
+    main()
+    # SiteArchiver(
+    #     "http://www.scp-wiki.net", "scp-wiki.net", file_path="D:\scp_archives",
+    #     wait_time=60
+    # )

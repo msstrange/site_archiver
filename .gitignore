@@ -39,4 +39,4 @@ tmtagsHistory
 *.sublime-project
 *.sublime-workspace
 .bundle
-Lib
+venv
